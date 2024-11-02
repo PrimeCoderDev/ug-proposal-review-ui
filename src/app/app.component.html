@@ -1,6 +1,9 @@
 <div class="flex flex-col items-center justify-center h-screen w-screen">
   <mat-slide-toggle>Toggle me!</mat-slide-toggle>
-  <i class="ti ti-address-book-off"></i>
+  <div class="flex bg-red-500 m-5 p-2">
+    <i class="text-xl text-white ti ti-address-book-off"></i>
+    <i class="text-xl ti ti-square-check"></i>
+  </div>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
