@@ -1,0 +1,73 @@
+<div class="flex flex-col h-screen w-screen items-center justify-center gap-5">
+  <img
+    class="w-4/12 lg:w-2/12"
+    src="/assets/UgHorizontalColor.svg"
+    alt="LogoUG"
+  />
+  <h1 class="text-blue-950 text-xl font-medium mt-5">Revisión de Propuestas</h1>
+  <form
+    class="flex flex-col gap-5"
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="flex flex-col gap-2">
+      <label for="username" class="text-sm"
+        >Usuario<span class="font-semibold text-red-600">*</span></label
+      >
+      <input
+        class="border border-gray-300 rounded-md p-2"
+        type="text"
+        name="username"
+        id="username"
+        formControlName="username"
+      />
+
+      @if(loginForm.get('username')?.invalid &&
+      loginForm.get('username')?.touched){
+      @if(loginForm.get('username')?.errors?.['required']){
+      <small>El 'Usuario' es requerido.</small>
+      } @if(loginForm.get('username')?.errors?.['minlength']){
+      <small>El 'Usuario' debe tener al menos 10 caracteres.</small>
+      } @if(loginForm.get('username')?.errors?.['maxlength']){
+      <small>El 'Usuario' debe tener como maximo 13 caracteres.</small>
+      } }
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="" class="text-sm"
+        >Contraseña<span class="font-semibold text-red-600">*</span></label
+      >
+      <div class="flex items-center justify-center">
+        <input
+          class="border-y border-l border-gray-300 p-2 rounded-s-md"
+          type="password"
+          name="password"
+          id="password"
+          formControlName="password"
+        /><button
+          type="button"
+          class="bg-gray-100 py-2 px-3 border rounded-e-md"
+        >
+          <i class="ti ti-eye-filled text-gray-500"></i>
+        </button>
+      </div>
+      @if(loginForm.get('password')?.invalid &&
+      loginForm.get('password')?.touched){
+      @if(loginForm.get('password')?.errors?.['required']){
+      <small>La 'Contraseña' es requerida.</small>
+
+      } @if(loginForm.get('password')?.errors?.['minlength']){
+      <small>La 'Contraseña' debe tener al menos 8 caracteres.</small>
+
+      }}
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+      [disabled]="loginForm.invalid"
+    >
+      Acceder
+    </button>
+  </form>
+  <span class="text-gray-500 opacity-80 mt-5 font-semibold"
+    >© Universidad de Guayaquil</span
+  >
+</div>

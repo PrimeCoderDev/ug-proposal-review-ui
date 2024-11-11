@@ -1,0 +1,84 @@
+<div class="flex flex-col items-center justify-center m-5 gap-5">
+  <h1>Carga de Propuestas</h1>
+  <div class="flex gap-5">
+    <mat-form-field>
+      <mat-label>Periodo</mat-label>
+      <mat-select>
+        @for (period of periods; track period) {
+        <mat-option [value]="period.value">{{ period.viewValue }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <button mat-fab aria-label="Buscar periodo">
+      <i class="ti ti-zoom"></i>
+    </button>
+  </div>
+  <button disabled class="bg-blue-300 p-2 rounded-md">
+    <i class="ti ti-upload"></i> Realizar Carga
+  </button>
+  <!--<mat-form-field>
+    <mat-label>Filtro</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="" #input />
+  </mat-form-field>-->
+
+  <div class="mat-elevation-z8 w-full">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="documentId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Cédula</th>
+        <td mat-cell *matCellDef="let row">{{ row.documentId }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Estudiante</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="option">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Opción</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.option }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="caption">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Rubro</th>
+        <td mat-cell *matCellDef="let row">{{ row.caption }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Estado Solicitud
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="practicesValidated">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Prácticas Validadas
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.practicesValidated }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="linkageValidated">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Vinculación Validada
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.linkageValidated }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!--<tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="5">
+          No se encontro informacion con el filtro "{{ input.value }}"
+        </td>
+      </tr>-->
+    </table>
+
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      aria-label="Select page of users"
+    ></mat-paginator>
+  </div>
+</div>
