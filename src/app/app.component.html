@@ -1,38 +1,31 @@
-<div class="flex flex-col items-center justify-center h-screen w-screen">
-  <mat-slide-toggle>Toggle me!</mat-slide-toggle>
-  <div class="flex bg-red-500 m-5 p-2">
-    <i class="text-xl text-white ti ti-address-book-off"></i>
-    <i class="text-xl ti ti-square-check"></i>
+@if(showLayout) {
+<div class="flex flex-col h-screen">
+  <!-- Navbar -->
+  <app-navbar (toggleSidebar)="toggleSidebar()"></app-navbar>
+
+  <div class="flex flex-1">
+    <div class="flex-1 p-4">
+      <router-outlet></router-outlet>
+    </div>
   </div>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
 
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-    </ng-container>
+  <!-- Footer -->
+  <app-footer></app-footer>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-    </ng-container>
+  <!-- Sidebar y Overlay -->
+  @if(isSidebarOpen) {
+  <div class="fixed inset-0 z-50 flex">
+    <!-- Overlay -->
+    <div
+      class="fixed inset-0 bg-black opacity-50"
+      (click)="toggleSidebar()"
+    ></div>
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="weight">
-      <th mat-header-cell *matHeaderCellDef>Weight</th>
-      <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
-    </ng-container>
-
-    <!-- Symbol Column -->
-    <ng-container matColumnDef="symbol">
-      <th mat-header-cell *matHeaderCellDef>Symbol</th>
-      <td mat-cell *matCellDef="let element">{{ element.symbol }}</td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
+    <!-- Sidebar -->
+    <app-sidebar (toggleSidebar)="toggleSidebar()"></app-sidebar>
+  </div>
+  }
 </div>
+} @else {
+<router-outlet></router-outlet>
+}
