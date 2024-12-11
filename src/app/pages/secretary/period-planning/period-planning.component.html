@@ -1,0 +1,87 @@
+<app-modal
+  *ngIf="isModalAddOpen"
+  [title]="'Agregar periodo'"
+  [size]="'small'"
+  [contentTemplate]="modalAdd"
+  (closeModal)="toggleAddModal()"
+></app-modal>
+
+<ng-template #modalAdd>
+  <form class="flex flex-col gap-5" autocomplete="off">
+    <div class="flex flex-col gap-2">
+      <label for="description" class="text-sm">Descripción</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="startDate" class="text-sm">Fecha de inicio</label>
+      <input class="border border-gray-300 rounded-md p-2" type="date" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="endDate" class="text-sm">Fecha de fin</label>
+      <input class="border border-gray-300 rounded-md p-2" type="date" />
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      Guardar
+    </button>
+  </form>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalEditOpen"
+  [title]="'Editar periodo'"
+  [size]="'small'"
+  [contentTemplate]="modalEdit"
+  (closeModal)="toggleEditModal()"
+></app-modal>
+
+<ng-template #modalEdit>
+  <form class="flex flex-col gap-5" autocomplete="off">
+    <div class="flex flex-col gap-2">
+      <label for="description" class="text-sm">Descripción</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="startDate" class="text-sm">Fecha de inicio</label>
+      <input class="border border-gray-300 rounded-md p-2" type="date" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="endDate" class="text-sm">Fecha de fin</label>
+      <input class="border border-gray-300 rounded-md p-2" type="date" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="status" class="text-sm">Estado</label>
+      <select class="border border-gray-300 rounded-md p-2">
+        <option value="-">Seleccione</option>
+        <option value="A">Activo</option>
+        <option value="I">Inactivo</option>
+      </select>
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      Guardar
+    </button>
+  </form>
+</ng-template>
+
+<div class="flex flex-col items-center justify-center min-w-[100vw] gap-5">
+  <span class="text-2xl m-5">Planificación de periodo</span>
+  <div class="flex flex-col gap-5 items-center justify-center">
+    <button
+      class="bg-green-500 p-2 rounded-lg text-white w-2/12 text-lg"
+      (click)="toggleAddModal()"
+    >
+      <i class="ti ti-plus"></i> Agregar
+    </button>
+    <app-table
+      [tableWidth]="'w-11/12'"
+      [columns]="columns"
+      [data]="data()"
+      [actionsConfig]="actionsConfig"
+      (onEdit)="onEdit($event)"
+      (onDelete)="onDelete($event)"
+    ></app-table>
+  </div>
+</div>

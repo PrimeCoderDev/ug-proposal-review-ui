@@ -1,37 +1,109 @@
-<aside
-  class="relative bg-blue-300 h-full w-80 p-4 transition ease-in-out delay-200 duration-300"
+<div
+  [class.w-64]="!collapsed"
+  [class.w-20]="collapsed"
+  class="flex flex-col h-screen bg-gray-900 text-gray-100 transition-all duration-300"
 >
-  <button (click)="onToggleSidebar()"><i class="ti ti-x text-2xl"></i></button>
-  <div>
-    <mat-tree
-      #tree
-      [dataSource]="dataSource"
-      [childrenAccessor]="childrenAccessor"
-      class="bg-transparent"
-    >
-      <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-        <div class="flex justify-between items-center gap-2">
-          <i class="{{ node.classIcon }} text-2xl"></i>
-          <a href="{{ node.url }}">{{ node.name }}</a>
-        </div>
-      </mat-tree-node>
-      <mat-tree-node
-        *matTreeNodeDef="let node; when: hasChild"
-        matTreeNodePadding
-        matTreeNodeToggle
-        [cdkTreeNodeTypeaheadLabel]="node.name"
-      >
-        <button
-          mat-icon-button
-          matTreeNodeToggle
-          [attr.aria-label]="'Toggle ' + node.name"
-        >
-          <mat-icon class="mat-icon-rtl-mirror">
-            {{ tree.isExpanded(node) ? "expand_more" : "chevron_right" }}
-          </mat-icon>
-        </button>
-        {{ node.name }}
-      </mat-tree-node>
-    </mat-tree>
+  <!-- Botón para colapsar/expandir -->
+  <div class="flex items-center justify-between px-4 py-4">
+    <div *ngIf="!collapsed" class="flex items-center">
+      <div class="bg-blue-500 p-2 rounded-lg">
+        <span class="text-white font-bold text-xl">UG</span>
+      </div>
+      <span class="ml-3 font-semibold text-lg">Universidad de Guayaquil</span>
+    </div>
+    <button (click)="toggleCollapse()" class="text-gray-300 focus:outline-none">
+      <i
+        class="ti text-2xl"
+        [class.ti-chevron-left]="!collapsed"
+        [class.ti-chevron-right]="collapsed"
+      ></i>
+    </button>
   </div>
-</aside>
+
+  <!-- Navegación -->
+  <nav class="flex-1 px-4 py-5">
+    <ul>
+      <ng-container *ngFor="let option of menuOptions">
+        <!-- Nodo Padre -->
+        <li>
+          <div
+            *ngIf="option.children; else singleOption"
+            class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg cursor-pointer"
+            (click)="toggleSubmenu(option)"
+            [class.justify-center]="collapsed"
+          >
+            <i class="ti text-2xl" [class]="option.classIcon"></i>
+            <span *ngIf="!collapsed">{{ option.name }}</span>
+            <i
+              class="ti text-2xl"
+              [class.ti-chevron-down]="option.expanded"
+              [class.ti-chevron-right]="!option.expanded"
+              [class.ml-auto]="!collapsed"
+              [class.hidden]="collapsed"
+            ></i>
+          </div>
+
+          <!-- Plantilla para opciones sin hijos -->
+          <ng-template #singleOption>
+            <a
+              [routerLink]="option.url"
+              class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg cursor-pointer"
+              [class.justify-center]="collapsed"
+            >
+              <i class="ti text-2xl" [class]="option.classIcon"></i>
+              <span *ngIf="!collapsed">{{ option.name }}</span>
+            </a>
+          </ng-template>
+
+          <!-- Hijos del nodo -->
+          <ul
+            *ngIf="option.children && option.expanded"
+            [class.pl-4]="!collapsed"
+            [class.hidden]="collapsed"
+          >
+            <li
+              *ngFor="let child of option.children"
+              class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:bg-gray-800 rounded-lg cursor-pointer"
+            >
+              <a
+                [routerLink]="child.url"
+                class="flex items-center gap-2 w-full"
+              >
+                <i class="ti text-2xl" [class]="child.classIcon"></i>
+                <span *ngIf="!collapsed">{{ child.name }}</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ng-container>
+    </ul>
+  </nav>
+
+  <!-- Footer -->
+  <div class="px-4 py-4 border-t border-gray-700">
+    <div
+      class="flex justify-between items-center"
+      [class.gap-2]="collapsed"
+      [class.justify-center]="collapsed"
+    >
+      <a href="#" class="flex items-center gap-3 text-gray-300">
+        <i class="ti text-2xl ti-logout" [class.text-lg]="collapsed"></i>
+        <span *ngIf="!collapsed">Cerrar Sesión</span>
+      </a>
+      <div class="flex items-center">
+        <button
+          (click)="toggleTheme()"
+          class="flex items-center gap-2 text-gray-300 focus:outline-none"
+        >
+          <i
+            class="ti text-2xl"
+            [class.ti-sun]="!isDarkMode"
+            [class.ti-moon]="isDarkMode"
+            [class.text-lg]="collapsed"
+          ></i>
+          <span *ngIf="!collapsed">{{ isDarkMode ? "Oscuro" : "Claro" }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

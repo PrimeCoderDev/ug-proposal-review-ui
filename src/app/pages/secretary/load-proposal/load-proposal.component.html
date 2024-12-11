@@ -1,0 +1,162 @@
+<app-modal
+  *ngIf="isModalAddOpen"
+  [title]="'Seleccionar archivo'"
+  [size]="'small'"
+  [contentTemplate]="modalAdd"
+  (closeModal)="toggleAddModal()"
+></app-modal>
+
+<ng-template #modalAdd>
+  <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2">
+      <label for="status" class="text-sm">Archivos Disponibles</label>
+      <select class="border border-gray-300 rounded-md p-2">
+        <option value="-">Seleccione</option>
+        <option value="1">periodo_20230101_20231231</option>
+        <option value="2">periodo_20240101_20241231</option>
+      </select>
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      <i class="ti ti-upload"></i>
+      Cargar
+    </button>
+  </div>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalDetailOpen"
+  [title]="'Detalle de la propuesta'"
+  [size]="'small'"
+  [contentTemplate]="modalDetail"
+  (closeModal)="toggleDetailModal()"
+></app-modal>
+
+<ng-template #modalDetail>
+  <div class="flex flex-col gap-5">
+    <span>Fecha: </span>
+    <span>Estudiante solicitante:</span>
+    <span>Cedula Estudiante solicitante:</span>
+    <span>Estudiante par:</span>
+    <span>Cedula Estudiante par:</span>
+    <span>Carrera:</span>
+    <span>Título a obtener:</span>
+    <span>Modalidad de trabajo de titulación: Proyecto de investigación</span>
+    <span>Línea de Investigación:</span>
+    <span>Sublínea de Investigación:</span>
+    <span>Tema:</span>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      <i class="ti ti-download"></i>
+      Ver archivo adjunto
+    </button>
+  </div>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalEditOpen"
+  [title]="'Editar Detalle Propuesta'"
+  [size]="'small'"
+  [contentTemplate]="modalEdit"
+  (closeModal)="toggleEditModal()"
+></app-modal>
+
+<ng-template #modalEdit>
+  <form class="flex flex-col gap-5" autocomplete="off">
+    <div class="flex flex-col gap-2">
+      <label for="date" class="text-sm">Fecha</label>
+      <input class="border border-gray-300 rounded-md p-2" type="date" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="documentStudentName" class="text-sm">Estudiante Par</label>
+      <div class="flex gap-4">
+        <input
+          class="border border-gray-300 rounded-md p-2 w-11/12"
+          type="text"
+          readonly="true"
+        />
+        <button
+          type="button"
+          class="bg-yellow-500 text-white rounded-md px-1 py-2 hover:bg-yellow-600 w-3/12"
+        >
+          <i class="ti ti-zoom"></i> Buscar
+        </button>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="career" class="text-sm">Carrera</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="degree" class="text-sm">Título a obtener</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="modality" class="text-sm">Modalidad</label>
+      <input
+        class="border border-gray-300 rounded-md p-2"
+        type="text"
+        value="Proyecto de investigación"
+        readonly="true"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="line" class="text-sm">Línea de Investigación</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="subline" class="text-sm">Subínea de Investigación</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="title" class="text-sm">Tema</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      Guardar
+    </button>
+  </form>
+</ng-template>
+
+<div class="flex flex-col items-center justify-center min-w-[100vw] gap-5 mb-5">
+  <span class="text-2xl m-5">Carga de Propuestas</span>
+  <div class="flex flex-col gap-5 items-center justify-center">
+    <div class="flex flex-col items-center justify-center gap-5">
+      <div class="flex flex-row items-center justify-center gap-2">
+        <label for="period" class="text-sm">Periodo</label>
+        <select class="border border-gray-300 rounded-md p-2">
+          <option value="-">Seleccione</option>
+          <option value="1">Segundo periodo</option>
+        </select>
+      </div>
+      <div class="flex flex-row items-center justify-center gap-2">
+        <button
+          class="bg-green-500 p-2 rounded-lg text-white text-lg"
+          (click)="toggleAddModal()"
+        >
+          <i class="ti ti-upload"></i> Iniciar Carga
+        </button>
+        <button
+          class="bg-green-500 p-2 rounded-lg text-white text-lg"
+          (click)="(null)"
+          disabled="true"
+        >
+          <i class="ti ti-eye"></i> Ver Propuestas
+        </button>
+      </div>
+    </div>
+  </div>
+  <span class="text-2xl m-2">Detalle Propuestas</span>
+</div>
+<app-table
+  [tableWidth]="'w-9/12'"
+  [columns]="columns"
+  [data]="data()"
+  [actionsConfig]="actionsConfig"
+  (onEdit)="onEdit($event)"
+  (onDetail)="onDetail($event)"
+></app-table>

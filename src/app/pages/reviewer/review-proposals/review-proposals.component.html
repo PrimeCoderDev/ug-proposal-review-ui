@@ -1,0 +1,54 @@
+<app-modal
+  *ngIf="isModalDetailOpen"
+  [title]="'Detalle de la propuesta'"
+  [size]="'small'"
+  [contentTemplate]="modalDetail"
+  (closeModal)="toggleDetailModal()"
+></app-modal>
+
+<ng-template #modalDetail>
+  <div class="flex flex-col gap-5">
+    <span>Fecha: </span>
+    <span>Estudiante solicitante:</span>
+    <span>Cedula Estudiante solicitante:</span>
+    <span>Estudiante par:</span>
+    <span>Cedula Estudiante par:</span>
+    <span>Carrera:</span>
+    <span>Título a obtener:</span>
+    <span>Modalidad de trabajo de titulación: Proyecto de investigación</span>
+    <span>Línea de Investigación:</span>
+    <span>Sublínea de Investigación:</span>
+    <span>Tema:</span>
+    <button
+      class="bg-yellow-500 text-white rounded-md px-1 py-2 hover:bg-yellow-600"
+    >
+      <i class="ti ti-download"></i>
+      Ver archivo adjunto
+    </button>
+    <div class="flex flex-col gap-2">
+      <label for="status" class="text-sm">Estado</label>
+      <select class="border border-gray-300 rounded-md p-2">
+        <option value="-">Seleccione</option>
+        <option value="P">PENDIENTE</option>
+        <option value="A">VALIDADO Y APROBADO</option>
+        <option value="R">DEVUELTO</option>
+      </select>
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      Guardar
+    </button>
+  </div>
+</ng-template>
+
+<div class="flex flex-col items-center justify-center min-w-[100vw] gap-5 mb-5">
+  <span class="text-2xl m-5">Revision de Propuestas</span>
+</div>
+<app-table
+  [tableWidth]="'w-9/12'"
+  [columns]="columns"
+  [data]="data()"
+  [actionsConfig]="actionsConfig"
+  (onDetail)="onDetail($event)"
+></app-table>

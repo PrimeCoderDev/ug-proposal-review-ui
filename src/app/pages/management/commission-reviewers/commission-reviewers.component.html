@@ -1,0 +1,123 @@
+<app-modal
+  *ngIf="isModalAddOpen"
+  [title]="'Agregar periodo'"
+  [size]="'small'"
+  [contentTemplate]="modalAdd"
+  (closeModal)="toggleAddModal()"
+></app-modal>
+
+<ng-template #modalAdd>
+  <form class="flex flex-col gap-5" autocomplete="off">
+    <div class="flex flex-col gap-2">
+      <label for="periodo" class="text-sm">Periodo</label>
+      <div class="flex gap-4">
+        <input
+          class="border border-gray-300 rounded-md p-2 w-11/12"
+          type="text"
+          readonly="true"
+        />
+        <button
+          type="button"
+          class="bg-yellow-500 text-white rounded-md px-1 py-2 hover:bg-yellow-600 w-3/12"
+        >
+          <i class="ti ti-zoom"></i> Buscar
+        </button>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="description" class="text-sm">Descripción</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      Guardar
+    </button>
+  </form>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalDetailOpen"
+  [title]="'Detalle Comision de revisores'"
+  [size]="'small'"
+  [contentTemplate]="modalDetail"
+  (closeModal)="toggleDetailModal()"
+></app-modal>
+
+<ng-template #modalDetail>
+  <div class="flex flex-col gap-5"></div>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalEditOpen"
+  [title]="'Editar Comision de revisores'"
+  [size]="'small'"
+  [contentTemplate]="modalEdit"
+  (closeModal)="toggleEditModal()"
+></app-modal>
+
+<ng-template #modalEdit>
+  <form class="flex flex-col gap-5" autocomplete="off">
+    <div class="flex flex-col gap-2">
+      <label for="periodo" class="text-sm">Periodo</label>
+      <div class="flex gap-4">
+        <input
+          class="border border-gray-300 rounded-md p-2 w-11/12"
+          type="text"
+          readonly="true"
+        />
+        <button
+          type="button"
+          class="bg-yellow-500 text-white rounded-md px-1 py-2 hover:bg-yellow-600 w-3/12"
+        >
+          <i class="ti ti-zoom"></i> Buscar
+        </button>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="description" class="text-sm">Descripción</label>
+      <input class="border border-gray-300 rounded-md p-2" type="text" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="status" class="text-sm">Estado</label>
+      <select class="border border-gray-300 rounded-md p-2">
+        <option value="-">Seleccione</option>
+        <option value="A">Activo</option>
+        <option value="I">Inactivo</option>
+      </select>
+    </div>
+    <button
+      class="bg-green-500 p-2 rounded-lg text-white text-lg"
+      (click)="(null)"
+      type="button"
+    >
+      <i class="ti ti-user-edit"></i> Editar Integrantes
+    </button>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+    >
+      Guardar
+    </button>
+  </form>
+</ng-template>
+
+<div class="flex flex-col items-center justify-center min-w-[100vw] gap-5">
+  <span class="text-2xl m-5">Comision de revisores</span>
+  <div class="flex flex-col gap-5 items-center justify-center w-screen">
+    <button
+      class="bg-green-500 p-2 rounded-lg text-white w-2/12 text-lg"
+      (click)="toggleAddModal()"
+    >
+      <i class="ti ti-plus"></i> Agregar
+    </button>
+    <app-table
+      [tableWidth]="'w-11/12'"
+      [columns]="columns"
+      [data]="data()"
+      [actionsConfig]="actionsConfig"
+      (onDetail)="onDetail($event)"
+      (onEdit)="onEdit($event)"
+      (onDelete)="onDelete($event)"
+    ></app-table>
+  </div>
+</div>

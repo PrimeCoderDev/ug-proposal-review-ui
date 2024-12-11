@@ -1,0 +1,23 @@
+<div
+  class="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-50 p-5"
+>
+  <!-- Contenedor del modal -->
+  <div
+    class="bg-white rounded-lg shadow-lg w-full mx-4"
+    [ngClass]="modalSizeClass"
+  >
+    <!-- Header del modal -->
+    <div class="flex justify-between items-center border-b p-4">
+      <h2 class="text-lg font-semibold">{{ title }}</h2>
+      <button
+        class="text-gray-400 hover:text-gray-600 animate-bounce"
+        (click)="closeModal.emit()"
+      >
+        <i class="ti ti-x text-xl"></i>
+      </button>
+    </div>
+    <div class="p-4">
+      <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+    </div>
+  </div>
+</div>

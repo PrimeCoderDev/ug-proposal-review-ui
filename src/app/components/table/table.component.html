@@ -1,0 +1,148 @@
+<div
+  class="mx-auto overflow-x-auto scrollbar scrollbar-visible text-nowrap p-5 border-2 border-gray-100 rounded-lg"
+  [ngClass]="tableWidth"
+>
+  <table
+    class="min-w-full table-auto border-collapse border border-gray-300 rounded-lg"
+  >
+    <thead class="bg-gray-100 text-left">
+      <tr>
+        <th
+          *ngFor="let header of table.getHeaderGroups()[0].headers"
+          class="px-4 py-2 border border-gray-300 text-sm font-semibold text-gray-700"
+        >
+          <div class="flex items-center justify-between">
+            <ng-container
+              *flexRender="
+                header.column.columnDef.header;
+                props: header.getContext()
+              "
+            >
+              {{ header.column.columnDef.header }}
+            </ng-container>
+            <!-- Botón de ordenamiento -->
+            <button
+              class="ml-2 text-gray-600 hover:text-blue-500 transition"
+              (click)="header.column.toggleSorting()"
+            >
+              <i
+                *ngIf="!header.column.getIsSorted()"
+                class="ti ti-arrows-sort text-lg"
+              ></i>
+              <i
+                *ngIf="header.column.getIsSorted() === 'asc'"
+                class="ti ti-arrow-up text-lg"
+              ></i>
+              <i
+                *ngIf="header.column.getIsSorted() === 'desc'"
+                class="ti ti-arrow-down text-lg"
+              ></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th
+          *ngFor="let header of table.getHeaderGroups()[0].headers"
+          class="px-4 py-2 border border-gray-300"
+        >
+          <input
+            *ngIf="header.column.getCanFilter()"
+            type="text"
+            (input)="onFilterInput($event, header.column)"
+            placeholder="Filtrar {{ header.column.columnDef.header }}..."
+            class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let row of table.getRowModel().rows"
+        class="hover:bg-gray-100 transition"
+      >
+        <td
+          *ngFor="let cell of row.getVisibleCells()"
+          class="px-4 py-2 border border-gray-300 text-sm text-gray-700"
+        >
+          <ng-container *ngIf="cell.column.id !== 'actions'">
+            <ng-container
+              *flexRender="cell.column.columnDef.cell; props: cell.getContext()"
+            >
+              {{ cell.getValue() }}
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngIf="cell.column.id === 'actions'">
+            <div class="flex items-center justify-center text-xl gap-2">
+              <!-- Botón Detalle -->
+              <button
+                *ngIf="actionsConfig.detail"
+                class="ml-2 text-green-500 hover:text-green-700"
+                (click)="onDetail.emit(cell.row.original)"
+                title="Ver detalle"
+              >
+                <i class="ti ti-eye"></i>
+              </button>
+              <!-- Botón Editar -->
+              <button
+                *ngIf="actionsConfig.edit"
+                class="text-blue-500 hover:text-blue-700"
+                (click)="onEdit.emit(cell.row.original)"
+                title="Editar"
+              >
+                <i class="ti ti-edit"></i>
+              </button>
+              <!-- Botón Eliminar -->
+              <button
+                *ngIf="actionsConfig.delete"
+                class="text-red-500 hover:text-red-700"
+                (click)="onDelete.emit(cell.row.original)"
+                title="Eliminar"
+              >
+                <i class="ti ti-trash-x"></i>
+              </button>
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flex items-center justify-between mt-4">
+    <!-- Selector de filas por página -->
+    <div class="flex items-center">
+      <label class="text-sm text-gray-700 mr-2"> Filas por página: </label>
+      <select
+        class="border rounded px-2 py-1 text-sm"
+        (change)="onRowsPerPageChange($event)"
+      >
+        <option *ngFor="let size of [5, 10, 20, 50]" [value]="size">
+          {{ size }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Controles de paginación -->
+    <div class="flex items-center space-x-4">
+      <button
+        class="px-3 py-1 bg-gray-100 text-gray-700 rounded border border-gray-300 hover:bg-gray-200 disabled:opacity-50"
+        (click)="table.previousPage()"
+        [disabled]="!table.getCanPreviousPage()"
+      >
+        Anterior
+      </button>
+      <span class="text-sm text-gray-700">
+        Página {{ table.getState().pagination.pageIndex + 1 }} de
+        {{ table.getPageCount() }}
+      </span>
+      <button
+        class="px-3 py-1 bg-gray-100 text-gray-700 rounded border border-gray-300 hover:bg-gray-200 disabled:opacity-50"
+        (click)="table.nextPage()"
+        [disabled]="!table.getCanNextPage()"
+      >
+        Siguiente
+      </button>
+    </div>
+  </div>
+</div>

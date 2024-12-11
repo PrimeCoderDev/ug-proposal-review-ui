@@ -11,63 +11,68 @@
     (ngSubmit)="onSubmit()"
   >
     <div class="flex flex-col gap-2">
-      <label for="username" class="text-sm"
-        >Usuario<span class="font-semibold text-red-600">*</span></label
-      >
+      <label for="username" class="text-sm">
+        Usuario<span class="font-semibold text-red-600">*</span>
+      </label>
       <input
+        autocomplete="off"
         class="border border-gray-300 rounded-md p-2"
         type="text"
         name="username"
         id="username"
         formControlName="username"
+        (blur)="onFieldBlur('username')"
+        [ngClass]="{
+          'border-red-500':
+            loginForm.get('password')?.invalid &&
+            loginForm.get('password')?.touched,
+          'border-gray-300':
+            loginForm.get('password')?.valid &&
+            loginForm.get('password')?.touched
+        }"
       />
-
-      @if(loginForm.get('username')?.invalid &&
-      loginForm.get('username')?.touched){
-      @if(loginForm.get('username')?.errors?.['required']){
-      <small>El 'Usuario' es requerido.</small>
-      } @if(loginForm.get('username')?.errors?.['minlength']){
-      <small>El 'Usuario' debe tener al menos 10 caracteres.</small>
-      } @if(loginForm.get('username')?.errors?.['maxlength']){
-      <small>El 'Usuario' debe tener como maximo 13 caracteres.</small>
-      } }
     </div>
     <div class="flex flex-col gap-2">
-      <label for="" class="text-sm"
-        >Contraseña<span class="font-semibold text-red-600">*</span></label
-      >
+      <label for="password" class="text-sm">
+        Contraseña<span class="font-semibold text-red-600">*</span>
+      </label>
       <div class="flex items-center justify-center">
         <input
           class="border-y border-l border-gray-300 p-2 rounded-s-md"
-          type="password"
+          [type]="showPassword ? 'text' : 'password'"
           name="password"
           id="password"
           formControlName="password"
-        /><button
+          (blur)="onFieldBlur('password')"
+          [ngClass]="{
+            'border-red-500':
+              loginForm.get('password')?.invalid &&
+              loginForm.get('password')?.touched,
+            'border-gray-300':
+              loginForm.get('password')?.valid &&
+              loginForm.get('password')?.touched
+          }"
+        />
+        <button
           type="button"
           class="bg-gray-100 py-2 px-3 border rounded-e-md"
+          (click)="togglePasswordVisibility()"
         >
-          <i class="ti ti-eye-filled text-gray-500"></i>
+          <i
+            class="ti"
+            [ngClass]="showPassword ? ' ti-eye-off' : 'ti-eye'"
+            text-gray-500
+          ></i>
         </button>
       </div>
-      @if(loginForm.get('password')?.invalid &&
-      loginForm.get('password')?.touched){
-      @if(loginForm.get('password')?.errors?.['required']){
-      <small>La 'Contraseña' es requerida.</small>
-
-      } @if(loginForm.get('password')?.errors?.['minlength']){
-      <small>La 'Contraseña' debe tener al menos 8 caracteres.</small>
-
-      }}
     </div>
     <button
       class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
-      [disabled]="loginForm.invalid"
     >
       Acceder
     </button>
   </form>
-  <span class="text-gray-500 opacity-80 mt-5 font-semibold"
-    >© Universidad de Guayaquil</span
-  >
+  <span class="text-gray-500 opacity-80 mt-5 font-semibold">
+    © Universidad de Guayaquil
+  </span>
 </div>

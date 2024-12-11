@@ -1,0 +1,16 @@
+<div class="flex flex-col items-center justify-center min-w-[100vw] gap-5 mb-5">
+  <span class="text-2xl m-5">Corrección de Propuestas</span>
+  <div class="flex flex-col gap-5 border-2 border-blue-500 p-5 rounded-lg">
+    <div class="flex flex-col gap-2">
+      <label for="career" class="text-sm">Subir Corrección</label>
+      <input class="border border-gray-300 rounded-md p-2" type="file" />
+    </div>
+    <button
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+      (click)="success()"
+      type="button"
+    >
+      Guardar
+    </button>
+  </div>
+</div>
