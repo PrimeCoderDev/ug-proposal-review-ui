@@ -252,7 +252,7 @@ export class LoadProposalComponent implements OnInit {
             this.editForm.researchSubline =
               response.data?.proposal.research_subline || '';
             this.editForm.topic = response.data?.proposal.title || '';
-            this.editForm.document = response.data?.partner.document || '';
+            this.editForm.document = response.data?.partner?.document ?? '';
             this.partnerSearchResult = null;
             this.isSaveEnabled = false;
 
