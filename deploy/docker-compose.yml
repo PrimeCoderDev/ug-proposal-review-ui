@@ -1,0 +1,13 @@
+version: "3"
+services:
+  ug-proposal-review-ui:
+    build: .
+    container_name: ug-proposal-review-ui
+    ports:
+      - "4200:80"
+    networks:
+      - sandbox
+
+networks:
+  sandbox:
+    external: true

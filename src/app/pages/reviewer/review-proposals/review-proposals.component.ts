@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { TableComponent } from '@/app/components/table/table.component';
 import { ColumnDef } from '@tanstack/angular-table';
-import { ModalComponent } from '@/components/modal/modal.component';
+import { ModalComponent } from '@/app/components/modal/modal.component';
 import { CommonModule } from '@angular/common';
 
 type TProposalTable = {
@@ -63,7 +63,7 @@ export class ReviewProposalsComponent {
     },
     {
       accessorKey: 'viculationValidities',
-      header: 'Viculación Validadas',
+      header: 'Vinculación Validadas',
       cell: (info) => info.getValue(),
       filterFn: 'includesString',
     },

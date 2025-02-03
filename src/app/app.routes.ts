@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 
-import { LoginComponent } from '@/components/login/login.component';
-import { DashboardComponent } from '@/components/dashboard/dashboard.component';
-import { NotFoundComponent } from '@/components/not-found/not-found.component';
+import { LoginComponent } from '@/app/components/login/login.component';
+import { DashboardComponent } from '@/app/components/dashboard/dashboard.component';
+import { NotFoundComponent } from '@/app/components/not-found/not-found.component';
 
 import { PeriodPlanningComponent } from '@/app/pages/secretary/period-planning/period-planning.component';
 import { LoadProposalComponent } from '@/app/pages/secretary/load-proposal/load-proposal.component';

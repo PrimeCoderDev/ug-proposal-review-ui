@@ -32,7 +32,7 @@
             (click)="toggleSubmenu(option)"
             [class.justify-center]="collapsed"
           >
-            <i class="ti text-2xl" [class]="option.classIcon"></i>
+            <i class="ti text-2xl" [class]="option.icon"></i>
             <span *ngIf="!collapsed">{{ option.name }}</span>
             <i
               class="ti text-2xl"
@@ -46,11 +46,11 @@
           <!-- Plantilla para opciones sin hijos -->
           <ng-template #singleOption>
             <a
-              [routerLink]="option.url"
+              [routerLink]="option.path"
               class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg cursor-pointer"
               [class.justify-center]="collapsed"
             >
-              <i class="ti text-2xl" [class]="option.classIcon"></i>
+              <i class="ti text-2xl" [class]="option.icon"></i>
               <span *ngIf="!collapsed">{{ option.name }}</span>
             </a>
           </ng-template>
@@ -66,10 +66,10 @@
               class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:bg-gray-800 rounded-lg cursor-pointer"
             >
               <a
-                [routerLink]="child.url"
+                [routerLink]="child.path"
                 class="flex items-center gap-2 w-full"
               >
-                <i class="ti text-2xl" [class]="child.classIcon"></i>
+                <i class="ti text-2xl" [class]="child.icon"></i>
                 <span *ngIf="!collapsed">{{ child.name }}</span>
               </a>
             </li>

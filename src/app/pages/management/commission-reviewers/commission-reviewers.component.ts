@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TableComponent } from '@/app/components/table/table.component';
 import { ColumnDef } from '@tanstack/angular-table';
 import { DialogSwal } from '@/app/shared/Swal';
-import { ModalComponent } from '@/components/modal/modal.component';
+import { ModalComponent } from '@/app/components/modal/modal.component';
 import { CommonModule } from '@angular/common';
 
 type TCommissionTable = {

@@ -20,6 +20,7 @@
     "@angular/router": "^18.2.0",
     "@tabler/icons-webfont": "^3.24.0",
     "@tanstack/angular-table": "^8.20.5",
+    "dayjs": "^1.11.13",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.14.5",
     "tslib": "^2.3.0",

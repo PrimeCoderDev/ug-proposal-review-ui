@@ -4,8 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
-
 import { ToastSwal } from '@/app/shared/Swal';
+import { AuthService } from '@/app/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,11 @@ export class LoginComponent {
   loginForm: FormGroup;
   showPassword: boolean = false;
 
-  constructor(private FormBuilder: FormBuilder, private router: Router) {
+  constructor(
+    private FormBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.FormBuilder.group({
       username: [
         '',
@@ -81,16 +85,28 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Inicio de sesión exitoso',
-        showConfirmButton: false,
-        timer: 2000,
-      });
+      const credentials = this.loginForm.value;
 
-      const formData = this.loginForm.value;
-      console.log('Datos del formulario:', formData);
-      this.router.navigate(['/dashboard']);
+      this.authService.login(credentials).subscribe({
+        next: (response) => {
+          Swal.fire({
+            icon: 'success',
+            title: response?.message || 'Inicio de sesión exitoso',
+            showConfirmButton: false,
+            timer: 2000,
+          });
+          this.router.navigate(['/dashboard']);
+          sessionStorage.setItem('token', response.token ?? '');
+          localStorage.setItem('profile', JSON.stringify(response.data));
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error en el inicio de sesión',
+            text: err.error?.message || 'Ha ocurrido un error inesperado.',
+          });
+        },
+      });
     } else {
       Object.keys(this.loginForm.controls).forEach((fieldName) => {
         const field = this.loginForm.get(fieldName);

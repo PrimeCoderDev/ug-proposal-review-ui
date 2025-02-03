@@ -1,14 +1,16 @@
-import { Component, signal } from '@angular/core';
-import { TableComponent } from '@/app/components/table/table.component';
-import { ColumnDef } from '@tanstack/angular-table';
-import { DialogSwal } from '@/app/shared/Swal';
-import { ModalComponent } from '@/components/modal/modal.component';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TableComponent } from '@/app/components/table/table.component';
+import { ModalComponent } from '@/app/components/modal/modal.component';
+import { PeriodService } from '@/app/services/period.service';
+import { DialogSwal } from '@/app/shared/Swal';
+import { ColumnDef } from '@tanstack/angular-table';
 
 type TPeriodTable = {
   id: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   description: string;
   status: string;
 };
@@ -16,39 +18,43 @@ type TPeriodTable = {
 @Component({
   selector: 'app-period-planning',
   standalone: true,
-  imports: [TableComponent, ModalComponent, CommonModule],
+  imports: [CommonModule, FormsModule, TableComponent, ModalComponent],
   templateUrl: './period-planning.component.html',
-  styleUrl: './period-planning.component.css',
+  styleUrls: ['./period-planning.component.css'],
 })
-export class PeriodPlanningComponent {
+export class PeriodPlanningComponent implements OnInit {
   data = signal<TPeriodTable[]>([]);
   columns: ColumnDef<TPeriodTable>[] = [
     {
       accessorKey: 'description',
       header: 'Descripción',
       cell: (info) => info.getValue(),
-      filterFn: 'includesString',
     },
     {
-      accessorKey: 'startDate',
+      accessorKey: 'start_date',
       header: 'Fecha de inicio',
       cell: (info) => info.getValue(),
-      filterFn: 'includesString',
     },
     {
-      accessorKey: 'endDate',
+      accessorKey: 'end_date',
       header: 'Fecha de fin',
       cell: (info) => info.getValue(),
-      filterFn: 'includesString',
     },
     {
       accessorKey: 'status',
       header: 'Estado',
-      cell: (info) => info.getValue(),
-      filterFn: 'includesString',
+      cell: (info) => {
+        const status = info.getValue();
+
+        return status === 'ACTIVE'
+          ? 'Activo'
+          : status === 'INACTIVE'
+          ? 'Inactivo'
+          : status;
+      },
     },
     {
-      id: 'actions',
+      accessorKey: 'actions',
       header: 'Acciones',
       cell: (info) => info.row.original,
       enableColumnFilter: false,
@@ -59,60 +65,128 @@ export class PeriodPlanningComponent {
     edit: true,
     delete: true,
   };
-
-  dialogSwal = DialogSwal();
   isModalAddOpen = false;
   isModalEditOpen = false;
+  editingPeriod: TPeriodTable | null = null;
 
-  constructor() {
-    this.data.set([
-      {
-        id: '1',
-        startDate: '2023-01-01',
-        endDate: '2023-12-31',
-        description: 'Primer periodo',
-        status: 'Inactivo',
-      },
-      {
-        id: '2',
-        startDate: '2024-01-01',
-        endDate: '2024-12-31',
-        description: 'Segundo periodo',
-        status: 'Activo',
-      },
-    ]);
+  dialogSwal = DialogSwal();
+
+  constructor(private periodService: PeriodService) {}
+
+  ngOnInit(): void {
+    this.loadPeriods();
   }
 
-  toggleAddModal() {
+  loadPeriods(): void {
+    this.periodService.findAll().subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          this.data.set(response.data);
+        }
+      },
+      error: () => {
+        this.dialogSwal.Alert({
+          title: 'Error',
+          text: 'Error al cargar los períodos.',
+          icon: 'error',
+        });
+      },
+    });
+  }
+
+  toggleAddModal(): void {
     this.isModalAddOpen = !this.isModalAddOpen;
   }
 
-  toggleEditModal() {
+  toggleEditModal(): void {
     this.isModalEditOpen = !this.isModalEditOpen;
   }
 
-  onEdit(row: TPeriodTable) {
-    console.log('Editar:', row);
+  savePeriod(periodData: any): void {
+    if (this.editingPeriod) {
+      this.periodService.update(this.editingPeriod.id, periodData).subscribe({
+        next: (response) => {
+          if (response.status === 'success') {
+            this.loadPeriods();
+            this.toggleEditModal();
+            this.dialogSwal.Alert({
+              title: '¡Éxito!',
+              text:
+                response.message || 'El período se actualizó correctamente.',
+              icon: 'success',
+            });
+          }
+        },
+        error: (err) => {
+          this.dialogSwal.Alert({
+            title: 'Error',
+            text:
+              err.error?.message ||
+              'Ocurrió un error al actualizar el período.',
+            icon: 'error',
+          });
+        },
+      });
+    } else {
+      this.periodService.create(periodData).subscribe({
+        next: (response) => {
+          if (response.status === 'success') {
+            this.loadPeriods();
+            this.toggleAddModal();
+            this.dialogSwal.Alert({
+              title: '¡Éxito!',
+              text: response.message || 'El período se creó correctamente.',
+              icon: 'success',
+            });
+          }
+        },
+        error: (err) => {
+          this.dialogSwal.Alert({
+            title: 'Error',
+            text: err.error?.message || 'Ocurrió un error al crear el período.',
+            icon: 'error',
+          });
+        },
+      });
+    }
+  }
+
+  onEdit(row: TPeriodTable): void {
+    this.editingPeriod = row;
     this.toggleEditModal();
   }
 
-  onDelete(row: TPeriodTable) {
-    console.log('Eliminar:', row);
+  onDelete(row: TPeriodTable): void {
     this.dialogSwal
       .Confirm({
-        title: 'Eliminar periodo',
-        text: '¿Está seguro de que desea eliminar este periodo?',
+        title: 'Eliminar período',
+        text: '¿Está seguro de que desea eliminar este período?',
         icon: 'warning',
       })
       .then((result) => {
         if (result.isConfirmed) {
-          this.data.update((current) =>
-            current.map((item) =>
-              item.id === row.id && item.status === 'Activo'
-                ? { ...item, status: 'Inactivo' }
-                : item
-            )
-          );
+          this.periodService.remove(row.id).subscribe({
+            next: (response) => {
+              if (response.status === 'success') {
+                this.loadPeriods();
+                this.dialogSwal.Alert({
+                  title: '¡Éxito!',
+                  text:
+                    response.message || 'El período se eliminó correctamente.',
+                  icon: 'success',
+                });
+              }
+            },
+            error: (err) => {
+              this.dialogSwal.Alert({
+                title: 'Error',
+                text:
+                  err.error?.message ||
+                  'Ocurrió un error al eliminar el período.',
+                icon: 'error',
+              });
+            },
+          });
         }
       });
   }
