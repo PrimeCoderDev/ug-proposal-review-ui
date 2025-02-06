@@ -1,6 +1,6 @@
 <app-modal
   *ngIf="isModalDetailOpen"
-  [title]="'Detalle de la propuesta'"
+  [title]="'Realizar revision'"
   [size]="'small'"
   [contentTemplate]="modalDetail"
   (closeModal)="toggleDetailModal()"
@@ -8,38 +8,65 @@
 
 <ng-template #modalDetail>
   <div class="flex flex-col gap-5">
-    <span>Fecha: </span>
-    <span>Estudiante solicitante:</span>
-    <span>Cedula Estudiante solicitante:</span>
-    <span>Estudiante par:</span>
-    <span>Cedula Estudiante par:</span>
-    <span>Carrera:</span>
-    <span>Título a obtener:</span>
-    <span>Modalidad de trabajo de titulación: Proyecto de investigación</span>
-    <span>Línea de Investigación:</span>
-    <span>Sublínea de Investigación:</span>
-    <span>Tema:</span>
-    <button
-      class="bg-yellow-500 text-white rounded-md px-1 py-2 hover:bg-yellow-600"
+    <span>Tema: {{ proposalDetail?.title || "No definido" }}</span>
+    <span>Estudiante solicitante: {{ principalDetail?.name }}</span>
+    <span>Cédula Estudiante solicitante: {{ principalDetail?.document }}</span>
+    <span>Estudiante par: {{ partnerDetail?.name || "N/A" }}</span>
+    <span>Cédula Estudiante par: {{ partnerDetail?.document || "N/A" }}</span>
+    <span>Carrera: {{ principalDetail?.career }}</span>
+    <span>Facultad: {{ principalDetail?.faculty }}</span>
+    <span
+      >Título a obtener:
+      {{ proposalDetail?.title_obtain || "No definido" }}</span
     >
-      <i class="ti ti-download"></i>
-      Ver archivo adjunto
-    </button>
+    <span
+      >Modalidad de trabajo de titulación:
+      {{ proposalDetail?.modality || "No definido" }}</span
+    >
+    <span
+      >Línea de Investigación:
+      {{ proposalDetail?.research_line || "No definido" }}</span
+    >
+    <span
+      >Sublínea de Investigación:
+      {{ proposalDetail?.research_subline || "No definido" }}</span
+    >
+  </div>
+  <hr />
+  <form class="flex flex-col gap-5 mt-5">
+    <h1>Resolución</h1>
     <div class="flex flex-col gap-2">
       <label for="status" class="text-sm">Estado</label>
-      <select class="border border-gray-300 rounded-md p-2">
-        <option value="-">Seleccione</option>
-        <option value="P">PENDIENTE</option>
-        <option value="A">VALIDADO Y APROBADO</option>
-        <option value="R">DEVUELTO</option>
+      <select
+        [(ngModel)]="selectedStatus"
+        [ngModelOptions]="{ standalone: true }"
+        name="status"
+        class="border border-gray-300 rounded-md p-2"
+      >
+        <option value="">Seleccione</option>
+        <option value="PENDING">PENDIENTE</option>
+        <option value="APPROVED">APROBADO</option>
+        <option value="REJECTED">RECHAZADO</option>
       </select>
     </div>
+    <div class="flex flex-col gap-2">
+      <label for="comment" class="text-sm">Comentario</label>
+      <textarea
+        [(ngModel)]="comment"
+        [ngModelOptions]="{ standalone: true }"
+        name="comment"
+        id="comment"
+        class="border border-gray-300 rounded-md p-2"
+      ></textarea>
+    </div>
     <button
+      type="button"
       class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+      (click)="saveResolution()"
     >
       Guardar
     </button>
-  </div>
+  </form>
 </ng-template>
 
 <div class="flex flex-col items-center justify-center min-w-[100vw] gap-5 mb-5">

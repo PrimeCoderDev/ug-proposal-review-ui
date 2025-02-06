@@ -3,13 +3,19 @@ import { TableComponent } from '@/app/components/table/table.component';
 import { ColumnDef } from '@tanstack/angular-table';
 import { ModalComponent } from '@/app/components/modal/modal.component';
 import { CommonModule } from '@angular/common';
+import { ComissionService } from '@/app/services/comission.service';
+import { PeriodService } from '@/app/services/period.service';
+import { ProposalService } from '@/app/services/proposal.service';
+import { ReviewService } from '@/app/services/review.service';
+import { DialogSwal } from '@/app/shared/Swal';
 
 type TMemberTable = {
   id: string;
-  document: string;
+  id_person: string;
   name: string;
-  career: string;
   faculty: string;
+  status: string;
+  role_comission: string;
 };
 
 type TProposalTable = {
@@ -36,20 +42,8 @@ export class AssignmentProposalsComponent {
   data = signal<TMemberTable[]>([]);
   columns: ColumnDef<TMemberTable>[] = [
     {
-      accessorKey: 'document',
-      header: 'Cedula',
-      cell: (info) => info.getValue(),
-      filterFn: 'includesString',
-    },
-    {
       accessorKey: 'name',
       header: 'Nombre',
-      cell: (info) => info.getValue(),
-      filterFn: 'includesString',
-    },
-    {
-      accessorKey: 'career',
-      header: 'Carrera',
       cell: (info) => info.getValue(),
       filterFn: 'includesString',
     },
@@ -60,18 +54,28 @@ export class AssignmentProposalsComponent {
       filterFn: 'includesString',
     },
     {
+      accessorKey: 'role_comission',
+      header: 'Rol',
+      cell: (info) => info.getValue(),
+      filterFn: 'includesString',
+    },
+    {
+      accessorKey: 'status',
+      header: 'Estado',
+      cell: (info) => info.getValue(),
+      filterFn: 'includesString',
+    },
+    {
       id: 'actions',
       header: 'Acciones',
       cell: (info) => info.row.original,
       enableColumnFilter: false,
     },
   ];
-  actionsConfig = {
-    detail: true,
-    edit: false,
-    delete: false,
-  };
 
+  periods: any[] = [];
+  selectedPeriod: any = null;
+  isLoadEnabled: boolean = false;
   dataProposal = signal<TProposalTable[]>([]);
   columnsProposal: ColumnDef<TProposalTable>[] = [
     {
@@ -123,67 +127,135 @@ export class AssignmentProposalsComponent {
       enableColumnFilter: false,
     },
   ];
-  actionsConfigProposal = {
-    detail: false,
+  dialogSwal = DialogSwal();
+  selectedCommissionMemberId: string = '';
+
+  constructor(
+    private comissionService: ComissionService,
+    private periodService: PeriodService,
+    private proposalService: ProposalService,
+    private reviewService: ReviewService
+  ) {}
+
+  actionsConfig = {
+    detail: true,
     edit: false,
     delete: false,
   };
 
-  constructor() {
-    this.data.set([
-      {
-        id: '1',
-        document: '0912345678',
-        name: 'Maria Belen Benitez Caceres',
-        career: 'Ingenieria de Software',
-        faculty: 'Ciencias Matematicas y Fisicas',
-      },
-      {
-        id: '2',
-        document: '1201234567',
-        name: 'Pedro Pablo Fernandez Perez',
-        career: 'Ingenieria de Software',
-        faculty: 'Ciencias Matematicas y Fisicas',
-      },
-      {
-        id: '3',
-        document: '1712345678',
-        name: 'Natalia Maria Ibarra Alvarez',
-        career: 'Ingenieria de Software',
-        faculty: 'Ciencias Matematicas y Fisicas',
-      },
-    ]);
+  actionsConfigProposal = {
+    detail: true,
+    edit: false,
+    delete: false,
+  };
 
-    this.dataProposal.set([
-      {
-        id: '1',
-        document: '1234567890',
-        name: 'JUAN PEREZ',
-        option: 'TRABAJO DE TITUACIÓN',
-        category: 'Rubro 11',
-        statusApplication: 'PENDIENTE',
-        practicesValidities: '0',
-        viculationValidities: '0',
+  ngOnInit(): void {
+    this.loadReviewers();
+  }
+
+  private loadReviewers(): void {
+    this.comissionService.getReviewersByDocument().subscribe(
+      (response) => {
+        if (response.status === 'success') {
+          this.data.set(response.data);
+        } else {
+          console.error('Error al cargar los revisores:', response.message);
+        }
       },
-      {
-        id: '2',
-        document: '0987654321',
-        name: 'MARIA ESCOBAR',
-        option: 'TRABAJO DE TITUACIÓN',
-        category: 'Rubro 3',
-        statusApplication: 'DEVUELTO',
-        practicesValidities: '240',
-        viculationValidities: '160',
-      },
-    ]);
+      (error) => {
+        console.error('Error al cargar los revisores:', error);
+      }
+    );
   }
 
   toggleDetailModal() {
     this.isModalDetailOpen = !this.isModalDetailOpen;
+
+    if (!this.isModalDetailOpen) {
+      this.selectedPeriod = null;
+      this.dataProposal.set([]);
+    } else {
+      this.loadPeriods();
+    }
+  }
+  private loadPeriods(): void {
+    this.periodService.findAll().subscribe(
+      (response) => {
+        if (response.status === 'success') {
+          this.periods = response.data;
+        } else {
+          console.error('Error al cargar los periodos:', response.message);
+        }
+      },
+      (error) => {
+        console.error('Error al cargar los periodos:', error);
+      }
+    );
   }
 
-  onDetail(row: TMemberTable) {
-    console.log('Detalle:', row);
+  onDetail(row: TMemberTable): void {
+    this.selectedCommissionMemberId = row.id;
     this.toggleDetailModal();
+  }
+
+  onPeriodChange(event: Event): void {
+    const selectedId = (event.target as HTMLSelectElement).value;
+    this.selectedPeriod = this.periods.find(
+      (period) => period.id === selectedId
+    );
+    if (this.selectedPeriod) {
+      this.loadProposals(this.selectedPeriod.id);
+    }
+  }
+
+  private loadProposals(periodId: string): void {
+    this.proposalService.findAll(periodId).subscribe(
+      (response) => {
+        if (response.status === 'success') {
+          this.dataProposal.set(response.data);
+        } else {
+          console.error('Error al cargar propuestas:', response.message);
+        }
+      },
+      (error) => {
+        console.error('Error al cargar propuestas:', error);
+      }
+    );
+  }
+
+  onAssignProposal(proposal: TProposalTable, commissionMemberId: string): void {
+    const reviewData = {
+      idComissionMember: commissionMemberId,
+      idProposal: proposal.id,
+    };
+
+    this.reviewService.create(reviewData).subscribe(
+      (response) => {
+        if (response.status === 'success') {
+          this.dialogSwal.Alert({
+            title: 'Asignación Exitosa',
+            text: 'La propuesta ha sido asignada correctamente.',
+            icon: 'success',
+          });
+        } else {
+          this.dialogSwal.Alert({
+            title: 'Error en la Asignación',
+            text:
+              response.message || 'Ocurrió un error al asignar la propuesta.',
+            icon: 'error',
+          });
+        }
+      },
+      (error) => {
+        this.dialogSwal.Alert({
+          title: 'Error en la Asignación',
+          text:
+            error?.error?.message ||
+            'Ocurrió un error al comunicarse con el servidor.',
+          icon: 'error',
+        });
+        console.error('Error en la asignación:', error);
+      }
+    );
   }
 }

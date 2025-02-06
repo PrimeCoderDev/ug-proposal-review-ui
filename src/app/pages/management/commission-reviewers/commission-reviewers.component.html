@@ -1,51 +1,47 @@
 <app-modal
   *ngIf="isModalAddOpen"
-  [title]="'Agregar periodo'"
+  [title]="'Agregar Comision de revisores'"
   [size]="'small'"
   [contentTemplate]="modalAdd"
   (closeModal)="toggleAddModal()"
 ></app-modal>
-
 <ng-template #modalAdd>
   <form class="flex flex-col gap-5" autocomplete="off">
     <div class="flex flex-col gap-2">
       <label for="periodo" class="text-sm">Periodo</label>
-      <div class="flex gap-4">
-        <input
-          class="border border-gray-300 rounded-md p-2 w-11/12"
-          type="text"
-          readonly="true"
-        />
-        <button
-          type="button"
-          class="bg-yellow-500 text-white rounded-md px-1 py-2 hover:bg-yellow-600 w-3/12"
-        >
-          <i class="ti ti-zoom"></i> Buscar
-        </button>
-      </div>
+      <select
+        class="border border-gray-300 rounded-md p-2"
+        (change)="onPeriodChange($event)"
+        name="period"
+        required="true"
+      >
+        <option value="">Seleccione</option>
+        <option *ngFor="let period of periods" [value]="period.id">
+          {{ period.description }}
+        </option>
+      </select>
     </div>
     <div class="flex flex-col gap-2">
       <label for="description" class="text-sm">Descripción</label>
-      <input class="border border-gray-300 rounded-md p-2" type="text" />
+      <input
+        name="description"
+        class="border border-gray-300 rounded-md p-2"
+        type="text"
+        [(ngModel)]="description"
+        required="true"
+        (input)="onDescriptionChange($event)"
+        placeholder="Ingrese descripción"
+      />
     </div>
     <button
+      type="button"
       class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+      [disabled]="!isSaveEnabled"
+      (click)="onSave()"
     >
       Guardar
     </button>
   </form>
-</ng-template>
-
-<app-modal
-  *ngIf="isModalDetailOpen"
-  [title]="'Detalle Comision de revisores'"
-  [size]="'small'"
-  [contentTemplate]="modalDetail"
-  (closeModal)="toggleDetailModal()"
-></app-modal>
-
-<ng-template #modalDetail>
-  <div class="flex flex-col gap-5"></div>
 </ng-template>
 
 <app-modal
@@ -55,50 +51,130 @@
   [contentTemplate]="modalEdit"
   (closeModal)="toggleEditModal()"
 ></app-modal>
-
 <ng-template #modalEdit>
   <form class="flex flex-col gap-5" autocomplete="off">
     <div class="flex flex-col gap-2">
       <label for="periodo" class="text-sm">Periodo</label>
-      <div class="flex gap-4">
-        <input
-          class="border border-gray-300 rounded-md p-2 w-11/12"
-          type="text"
-          readonly="true"
-        />
-        <button
-          type="button"
-          class="bg-yellow-500 text-white rounded-md px-1 py-2 hover:bg-yellow-600 w-3/12"
-        >
-          <i class="ti ti-zoom"></i> Buscar
-        </button>
-      </div>
+      <select
+        class="border border-gray-300 rounded-md p-2"
+        [(ngModel)]="selectedPeriod"
+        name="editPeriod"
+        (change)="onPeriodChange($event)"
+        required
+      >
+        <option value="">Seleccione</option>
+        <option *ngFor="let period of periods" [value]="period.id">
+          {{ period.description }}
+        </option>
+      </select>
     </div>
     <div class="flex flex-col gap-2">
       <label for="description" class="text-sm">Descripción</label>
-      <input class="border border-gray-300 rounded-md p-2" type="text" />
+      <input
+        class="border border-gray-300 rounded-md p-2"
+        type="text"
+        [(ngModel)]="description"
+        name="editDescription"
+        (input)="onDescriptionChange($event)"
+      />
     </div>
     <div class="flex flex-col gap-2">
       <label for="status" class="text-sm">Estado</label>
-      <select class="border border-gray-300 rounded-md p-2">
+      <select
+        class="border border-gray-300 rounded-md p-2"
+        [(ngModel)]="selectedStatus"
+        name="editStatus"
+        required
+      >
         <option value="-">Seleccione</option>
-        <option value="A">Activo</option>
-        <option value="I">Inactivo</option>
+        <option value="ACTIVE">Activo</option>
+        <option value="INACTIVE">Inactivo</option>
       </select>
     </div>
     <button
       class="bg-green-500 p-2 rounded-lg text-white text-lg"
-      (click)="(null)"
       type="button"
+      (click)="toggleMembersModal()"
     >
       <i class="ti ti-user-edit"></i> Editar Integrantes
     </button>
     <button
       class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
+      [disabled]="!isSaveEnabled"
+      (click)="onSaveEdit()"
+      class="bg-blue-800 text-white rounded-md px-1 py-2 hover:bg-sky-500"
     >
       Guardar
     </button>
   </form>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalMembersOpen"
+  [title]="'Miembros Comision de revisores'"
+  [size]="'large'"
+  [contentTemplate]="modalMembers"
+  (closeModal)="toggleMembersModal()"
+></app-modal>
+<ng-template #modalMembers>
+  <div class="flex flex-col items-center justify-center gap-5">
+    <button
+      class="bg-green-500 p-2 rounded-lg text-white w-2/12 text-lg"
+      (click)="toggleAddMemberModal()"
+    >
+      <i class="ti ti-plus"></i> Agregar
+    </button>
+    <app-table
+      [tableWidth]="'w-11/12'"
+      [columns]="columnsMembers"
+      [data]="dataMembers"
+      [actionsConfig]="actionsConfigMembers"
+      (onEdit)="onEditMember($event)"
+      (onDelete)="onDeleteMember($event)"
+    ></app-table>
+  </div>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalAddMemberOpen"
+  [title]="'Agregar Miembro'"
+  [size]="'large'"
+  [contentTemplate]="modalAddMember"
+  (closeModal)="toggleAddMemberModal()"
+></app-modal>
+<ng-template #modalAddMember>
+  <div class="flex flex-col items-center justify-center gap-5">
+    <div class="flex flex-col gap-2 items-center justify-center">
+      <label for="selectedRole" class="text-sm">Rol</label>
+      <select
+        class="border border-gray-300 rounded-md p-2"
+        [(ngModel)]="selectedRole"
+        name="selectedRole"
+      >
+        <option value="">Seleccione</option>
+        <option value="COORDINATOR">COORDINADOR</option>
+        <option value="REVIEWER">REVISOR</option>
+      </select>
+    </div>
+    <app-table
+      [tableWidth]="'w-11/12'"
+      [columns]="columnsTeachers"
+      [data]="dataTeachers"
+      [actionsConfig]="actionsConfigTeachers"
+      (onDetail)="onAddTeacher($event)"
+    ></app-table>
+  </div>
+</ng-template>
+
+<app-modal
+  *ngIf="isModalDetailOpen"
+  [title]="'Detalle Comision de revisores'"
+  [size]="'small'"
+  [contentTemplate]="modalDetail"
+  (closeModal)="toggleDetailModal()"
+></app-modal>
+<ng-template #modalDetail>
+  <div class="flex flex-col gap-5"></div>
 </ng-template>
 
 <div class="flex flex-col items-center justify-center min-w-[100vw] gap-5">
@@ -113,7 +189,7 @@
     <app-table
       [tableWidth]="'w-11/12'"
       [columns]="columns"
-      [data]="data()"
+      [data]="data"
       [actionsConfig]="actionsConfig"
       (onDetail)="onDetail($event)"
       (onEdit)="onEdit($event)"

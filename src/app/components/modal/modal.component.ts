@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './modal.component.css',
 })
 export class ModalComponent {
-  @Input() size: 'small' | 'medium' | 'large' = 'medium';
+  @Input() size: 'small' | 'medium' | 'large' | 'extra-large' = 'medium';
   @Input() title: string = 'Modal Title';
   @Input() contentTemplate!: TemplateRef<any>;
   @Output() closeModal = new EventEmitter<void>();
@@ -24,8 +24,13 @@ export class ModalComponent {
     switch (this.size) {
       case 'small':
         return 'max-w-md';
+      case 'medium':
+        return 'max-w-2xl';
       case 'large':
         return 'max-w-4xl';
+      case 'extra-large':
+        return 'max-w-6xl';
+
       default:
         return 'max-w-2xl';
     }
